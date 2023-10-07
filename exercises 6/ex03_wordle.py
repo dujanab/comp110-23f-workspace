@@ -1,8 +1,7 @@
 """EX03 - Structured Wordle."""
 __author__ = "730467698"
 
-
-def contains_char(searched_thru_word: str, searched_for_character: str) -> bool:
+def contains_char(searched_thru_word: str, searched_for_character: chr) -> bool:
     """Returns found character (True or False) if character can be found at any index of word."""
     assert len(searched_for_character) == 1
 
@@ -18,9 +17,11 @@ def contains_char(searched_thru_word: str, searched_for_character: str) -> bool:
             character_idx += 1 
     return found_character
 
-
 def emojified(guessed_word: str, secret_word: str) -> str:
-    """Returns resulting emoji based on char idx conditions."""
+    """Returns resulting emoji based on if 
+    1) guessed word char idx is equal to secret word char idx (green)
+    2) guessed word char idx is equal to secret word char idx elsewhere (yellow)
+    3) guessed word char idx is never equal to secret word char idx (white)."""
     assert len(guessed_word) == len(secret_word)
 
     # defining emoji boxes
@@ -38,25 +39,25 @@ def emojified(guessed_word: str, secret_word: str) -> str:
             resulting_emoji += GREEN_BOX
         else: 
             found_character = contains_char(secret_word, guessed_word[character_idx])
-            if found_character:
+            if found_character == True:
                 resulting_emoji += YELLOW_BOX
             else:
                 resulting_emoji += WHITE_BOX
         character_idx += 1
     return resulting_emoji
 
-
-def input_guess(expected_length: int) -> str:
+def input_guess(expected_length: int) -> int:
     """Returns user input if user input len is equal to expected len."""
+
     # what happens if length of user input < length of secret word
     user_input: str = input(f"Enter a {expected_length} character word: ")
     while len(user_input) != expected_length:
         user_input = input(f"That wasn't {expected_length} chars! Try again: ")
     return user_input
 
-
 def main() -> None:
     """The entrypoint of the program and main game loop."""
+
     # location of secret word
     secret_word: str = "codes"
 
@@ -66,21 +67,17 @@ def main() -> None:
 
     # what happens based on 1) how many turns user has left and
     # 2) if they guess the secret word before running out of turns
-    won_game: bool = False
-    while (number_of_turns <= (max_turns)) and (not won_game):
+    while (number_of_turns <= (max_turns)):
         print(f'=== Turn {number_of_turns}/{max_turns} ===')
         guessed_word: str = input_guess(len(secret_word))
         resulting_emoji: str = emojified(guessed_word, secret_word)
         print(resulting_emoji)
         if guessed_word == secret_word:
-            won_game = True
+            print(f'You won in {number_of_turns}/{max_turns} turns! ')
+            exit()
         else:
             number_of_turns += 1
-    if won_game:
-        print(f'You won in {number_of_turns}/{max_turns} turns! ')
-    else:
-        print(f'X/{max_turns} – Sorry, try again tomorrow! ')
-
+    print(f'X/{max_turns} – Sorry, try again tomorrow! ')
 
 # allows us to run Wordle game as a module
 if __name__ == "__main__":
